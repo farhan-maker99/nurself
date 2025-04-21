@@ -1,2 +1,128 @@
 # nurself
 ini web anjayy
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Nurself - Toko Kosmetik</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body { font-family: 'Arial', sans-serif; }
+        .hidden { display: none; }
+        .btn { padding: 12px 24px; border-radius: 30px; font-weight: bold; transition: 0.3s; }
+        .btn-primary { background-color: #ff4081; color: white; }
+        .btn-primary:hover { background-color: #e60073; }
+        .icon-btn { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .fixed-btn { position: fixed; bottom: 20px; left: 20px; background-color: white; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <!-- Header -->
+    <header class="bg-pink-500 text-white py-4 text-center">
+        <h1 class="text-2xl font-bold">Nurself - Toko Kosmetik</h1>
+        <nav class="space-x-4 text-sm">
+                <a href="nurselffixhome.html" class="nav-link" onclick="showSection('home')">Home</a>
+                <a href="tokoshoppage.html" class="nav-link" onclick="showSection('shop')">Shop</a>
+                <a href="aipage.html" class="nav-link" onclick="showSection('ai-analyst')">AI Analyst</a>
+                <a href="konsuldokterpage.html" class="nav-link" onclick="showSection('consult-doctor')">Consultation</a>
+        </nav>
+    </header>
+
+    <!-- AI Analyst Section -->
+    <div class="container mx-auto px-4 py-6 text-center">
+        <h2 class="text-xl font-bold text-gray-800">Analisis Kulit dengan AI</h2>
+        <p class="text-gray-600 mt-2">Ambil foto atau unggah gambar kulitmu</p>
+
+        <div class="flex flex-col items-center mt-4">
+            <video id="video" autoplay class="border-4 border-pink-500 rounded-lg w-full max-w-sm hidden"></video>
+            <button id="capture-btn" class="btn btn-primary mt-4 hidden">Ambil Foto</button>
+            <canvas id="canvas" class="hidden"></canvas>
+            <img id="captured-image" class="hidden border-2 border-gray-300 rounded-lg mt-4 w-full max-w-sm">
+            <p id="analysis-result" class="text-pink-600 font-bold mt-4 hidden">Menganalisis...</p>
+        </div>
+    </div>
+
+    <!-- Tombol Kamera & Galeri -->
+    <div class="fixed-btn icon-btn" id="camera-btn">
+        <i class="fas fa-camera text-gray-700 text-xl"></i>
+    </div>
+
+    <div class="fixed-btn icon-btn" id="gallery-btn" style="left: 80px;">
+        <i class="fas fa-images text-gray-700 text-xl"></i>
+        <input type="file" id="image-upload" accept="image/*" class="hidden">
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        let video = document.getElementById("video");
+        let captureBtn = document.getElementById("capture-btn");
+        let canvas = document.getElementById("canvas");
+        let capturedImage = document.getElementById("captured-image");
+        let analysisResult = document.getElementById("analysis-result");
+        let cameraBtn = document.getElementById("camera-btn");
+        let galleryBtn = document.getElementById("gallery-btn");
+        let imageUpload = document.getElementById("image-upload");
+        let stream;
+
+        // Memulai kamera saat tombol kamera diklik
+        async function startCamera() {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+                video.srcObject = stream;
+                video.classList.remove("hidden");
+                captureBtn.classList.remove("hidden");
+            } catch (err) {
+                console.error("Gagal mengakses kamera:", err);
+                alert("Akses kamera diperlukan untuk menggunakan AI Analyst.");
+            }
+        }
+
+        // Menangkap gambar dari kamera
+        captureBtn.addEventListener("click", () => {
+            const ctx = canvas.getContext("2d");
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            capturedImage.src = canvas.toDataURL("image/png");
+            capturedImage.classList.remove("hidden");
+
+            // Simulasi analisis AI
+            analysisResult.textContent = "Menganalisis...";
+            analysisResult.classList.remove("hidden");
+
+            setTimeout(() => {
+                analysisResult.textContent = "Kulitmu tampak sehat! Coba produk serum kami.";
+            }, 2000);
+        });
+
+        // Menampilkan kamera saat tombol kamera ditekan
+        cameraBtn.addEventListener("click", startCamera);
+
+        // Mengunggah gambar dari galeri
+        galleryBtn.addEventListener("click", () => imageUpload.click());
+        imageUpload.addEventListener("change", (event) => {
+            let file = event.target.files[0];
+            if (file) {
+                let reader = new FileReader();
+                reader.onload = function (e) {
+                    capturedImage.src = e.target.result;
+                    capturedImage.classList.remove("hidden");
+
+                    // Simulasi analisis AI
+                    analysisResult.textContent = "Menganalisis...";
+                    analysisResult.classList.remove("hidden");
+
+                    setTimeout(() => {
+                        analysisResult.textContent = "Kulitmu tampak sehat! Coba produk serum kami.";
+                    }, 2000);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+
+</body>
+</html>
